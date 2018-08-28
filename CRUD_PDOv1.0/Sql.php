@@ -21,11 +21,31 @@ class Sql{
 		global $config;
 		$con = $config->conectar();
 
+		$verifExis = $this->verif($tabela, $condicao);
+		if($verifExis == 1){
+			$sql = "SELECT * FROM $tabela WHERE $condicao";
+			$stmt = $con->prepare($sql);
+			$stmt->execute();
+
+			return $stmt;
+		}else if($verifExis == 0){
+			return "0";
+		}
+	}
+
+	public function verif($tabela, $condicao){
+		global $config;
+		$con = $config->conectar();
+
 		$sql = "SELECT * FROM $tabela WHERE $condicao";
 		$stmt = $con->prepare($sql);
 		$stmt->execute();
 
-		return $stmt;
+		if($stmt->rowCount() != 0){
+			return 1;
+		}else{
+			return 0;
+		}
 	}
 
 	public function buildInsert($tabela, $arrayDados){   
@@ -141,23 +161,32 @@ class Sql{
 			global $config;
 			$con = $config->conectar();
 
-			// Atribui a instrução SQL construida no método   
-	        $sql = $this->buildUpdate($tabela, $dados, $condicao);
+			//Verifica se o elemento da condicao existe
+			$verifExis = $this->verif($tabela, $condicao);
+			// o valor 1 representa a existencia do elemento pesquisado
+			if($verifExis == 1){
+				// Atribui a instrução SQL construida no método   
+	        	$sql = $this->buildUpdate($tabela, $dados, $condicao);
 
-	        // Passa a instrução para o PDO   
-	        $stmt = $con->prepare($sql);  
+	        	// Passa a instrução para o PDO   
+	        	$stmt = $con->prepare($sql);  
 	    
-	        // Loop para passar os dados como parâmetro   
-	        $cont = 1;   
-	        foreach ($dados as $valor){  
-	            $stmt->bindValue($cont, $valor);  
-	            $cont++; 
-	        }
+	        	// Loop para passar os dados como parâmetro   
+	        	$cont = 1;   
+	        	foreach ($dados as $valor){  
+	            	$stmt->bindValue($cont, $valor);  
+	            	$cont++; 
+	        	}
 	       	
-	        // Executa a instrução SQL e captura o retorno   
-	        $retorno = $stmt->execute();
-	    
-	        return $retorno;
+		        // Executa a instrução SQL e captura o retorno   
+		        $retorno = $stmt->execute();
+		    
+		        return $retorno;
+			}else if($verifExis == 0){
+				return "Elemento pesquisado não existe";
+			}
+
+			
 	    }catch(PDOExeption $e){
 	    	echo "Erro ao atualizar dados: ".$e;
 	    } 
@@ -168,13 +197,19 @@ class Sql{
 			global $config;
 			$con = $config->conectar();
 
-			$sql = $this->buildDelete($tabela, $condicao);
+			$verifExis = $this->verif($tabela, $condicao);
 
-			$stmt = $con->prepare($sql);
+			if($verifExis == 1){
+				$sql = $this->buildDelete($tabela, $condicao);
 
-			$retorno = $stmt->execute();
+				$stmt = $con->prepare($sql);
 
-			return $retorno;
+				$retorno = $stmt->execute();
+
+				return $retorno;
+			}else if($verifExis == 0){
+				return "Elemento pesquisado não existe";
+			}
 		}catch(PDOExeption $e){
 	    	echo "Erro ao deletar dados: ".$e;
 	    } 

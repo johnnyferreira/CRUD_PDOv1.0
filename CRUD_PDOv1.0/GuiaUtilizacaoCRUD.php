@@ -11,67 +11,58 @@
 	//	1 - Selecionar todos os campos e valores da tabela
 
 	$result = $teste->select("adm"); //Deve ser especificado o nome da tabela que se deseja obter os dados
-
 	foreach ($result as $value) {
 		echo "id adm = ".$value["id_adm"]."<br>";
 		echo "login = ".$value["login"]."<br>";
 		echo "senha = ".$value["senha"]."<br>";	
 	}
-
 	echo "<hr>";
 
+
+	
 	// 2 - Selecionar somente um valor especifico
-	$condicao = "id_adm = 3233454644";
+	$condicao = "id_adm = 4";
 	$result2 = $teste->selectWhere("adm",$condicao); //Nome da tabela + condicao
 
-	foreach ($result2 as $valor);
-
-	if(@$valor){
-		echo "Encontrado<br>";
+	if($result2){
+		foreach ($result2 as $valor);
 		echo "Login: ".$valor["login"]." Senha: ".$valor["senha"];
 	}else{
-		echo "Não existe";
+		echo "Valor pesquisado não existe";
 	}
-
 	echo "<hr>";
+
+
 
 	// 3 - Inserir dados em uma tabela
 
 	//Dados a serem inseridos
-	$dados = ["login"=>"johnnyferreira","senha"=>"123"];
+	$dados = [
+			"login"=>"johnnyferreira",
+			"senha"=>"123"
+		];
 
 	$retorno = $teste->insert("adm", $dados); //Nome da tabela e array de dados.
-
 	if($retorno){
 		echo "inserido com sucesso";
 	}else{
 		echo "falha ao inserir"; //Essa falha pode ocorrer caso os nomes dos campos não correspondam com os do banco de dados
 	}
-
 	echo "<hr>";
+
+
 
 	// 4 - Atualizar dados de um campo - OBS: A funcao update não permite atualizar um campo sem uma condicao previamente especificada
-	$dados = ["senha"=>"567"];
+	$dados = [
+			"senha"=>"567"
+		];
+		
 	$condicao = "id_adm = 234232342";
-
 	$retorno = $teste->update("adm", $dados, $condicao);
-
-	if($retorno){
-		echo "Atualizado com sucesso";
-	}else{
-		echo "falha ao atualizar"; //Essa falha pode ocorrer caso os nomes dos campos não correspondam com os do banco de dados ou caso não exista a condicao especificada
-	}
-
 	echo "<hr>";
+
+
 
 	// 5 - Deletar dados da tabela - OBS: A funcao delete não permite deletar um campo sem uma condicao previamente especificada
 	$condicao = "senha = 567";
 	$retorno = $teste->delete("adm", $condicao);
-
-	if($retorno){
-		echo "Deletado com sucesso";
-	}else{
-		echo "falha ao deletar"; //Essa falha pode ocorrer caso os nomes dos campos não correspondam com os do banco de dados ou caso não exista a condicao especificada
-	}
-
-
