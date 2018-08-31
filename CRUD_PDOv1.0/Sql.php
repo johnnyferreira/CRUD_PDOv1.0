@@ -27,7 +27,7 @@ class Sql{
 			$stmt = $con->prepare($sql);
 			$stmt->execute();
 
-			return $stmt;
+			return $stmt->fetch(PDO::FETCH_ASSOC);
 		}else if($verifExis == 0){
 			return "0";
 		}
